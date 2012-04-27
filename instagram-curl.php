@@ -7,24 +7,48 @@
   *
   */
 
- class InstagramCurl {
+ class Instagram {
 
+ 	private $client_id;
+ 	private $access_token;
  	private $endpoint = 'https://api.instagram.com/v1/';
 
- 	public function __construct($client_id, $access_token){
- 		$this->client_id = $client_id;
- 		$this->access_token = $access_token;
+ 	public function __construct($cfg){
+ 		$this->client_id = $cfg['client_id'];
+ 		$this->access_token = $cfg['access_token'];
  	}
 
- 	public function request($endpoint, $query){
- 		$request = $this->buildRequest($endpoint, $query);
+ 	public function request($endpoint, $params = array()){
+ 		$request = $this->buildRequest($endpoint, $params);
  		return $this->sendRequest($request);
  	}
 
- 	private function buildRequest($endpoint, $query){
- 		$query['client_id'] = $this->client_id;
- 		$query['access_token'] = $this->access_token;
- 		return $this->endpoint . $endpoint . '?' . http_build_query($query);
+ 	public function media_id($id){
+ 		return $this->request('media/' . $id);
+ 	}
+
+ 	public function media_search($params){
+ 		return $this->request('media/search', $params);
+ 	}
+
+ 	public function media_popular(){
+ 		return $this->request('media/popular');
+ 	}
+
+	public function tags($tag){
+ 		return $this->request('tags/' . $tag);
+ 	}
+
+ 	public function tags_media_recent($tag, $params = array()){
+ 		return $this->request('tags/' . $tag . '/media/recent', $params);
+ 	}
+
+ 	public function tags_search($tag){
+ 		return $this->request('tags/search', array('q'=>$tag));
+ 	}
+
+ 	private function buildRequest($endpoint, $params){
+ 		return $this->endpoint . $endpoint . '?client_id=' . $this->client_id . '&access_token=' . $this->access_token . '&' . http_build_query($params);
  	}
 
  	private function sendRequest($uri){
@@ -34,7 +58,7 @@
  		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
  		$response = curl_exec($curl);
  		curl_close($curl);
- 		return $response;
+ 		return json_decode($response);
  	}
 
  }
