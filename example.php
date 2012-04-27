@@ -13,12 +13,15 @@
 			'access_token' => '15998.f59def8.3516b1fc823f41d89df8c0fa51b4ed08'
 		));
 
+		// $response = $instagram->users('15998');
+		// $response = $instagram->users_self_feed();
+		$response = $instagram->users_media_recent('15998');
 		// $response = $instagram->media_search(array("lat"=>"48.858844", "lng"=>"2.294351"));
-		// $response = $instagram->media_id(8);
+		// $response = $instagram->media(8);
 		// $response = $instagram->media_popular();
 		// $response = $instagram->tags_media_recent('bradford');
 		// $response = $instagram->tags('bradford');
-		$response = $instagram->tags_search('bradford');
+		// $response = $instagram->tags_search('bradford');
 
 		if( is_array($response->data) && isset($response->data[0]->images) ){
 			foreach ($response->data as $gram){

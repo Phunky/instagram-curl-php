@@ -18,13 +18,25 @@
  		$this->access_token = $cfg['access_token'];
  	}
 
- 	public function request($endpoint, $params = array()){
+ 	private function request($endpoint, $params = array()){
  		$request = $this->buildRequest($endpoint, $params);
  		return $this->sendRequest($request);
  	}
 
- 	public function media_id($id){
- 		return $this->request('media/' . $id);
+ 	public function users($user_id){
+ 		return $this->request('users/' . $user_id);
+ 	}
+
+ 	public function users_self_feed(){
+ 		return $this->request('users/self/feed');
+ 	}
+
+ 	public function users_media_recent($user_id){
+ 		return $this->request('users/' . $user_id . '/media/recent');
+ 	}
+
+ 	public function media($id){
+ 		return $this->request('media/' . $media_id);
  	}
 
  	public function media_search($params){
