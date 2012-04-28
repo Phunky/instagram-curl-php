@@ -43,6 +43,22 @@
  		return $this->request('users/search', array('q'=>$q, 'count'=>$count));
  	}
 
+ 	public function users_follows($user_id){
+ 		return $this->request('users/' . $user_id . '/follows');
+ 	}
+
+ 	public function users_followed_by($user_id){
+ 		return $this->request('users/' . $user_id . '/followed-by');
+ 	}
+
+ 	public function users_self_requested_by(){
+ 		return $this->request('users/self/requested-by');
+ 	}
+
+ 	public function users_relationship($user_id){
+ 		return $this->request('users/' . $user_id . '/relationship');
+ 	}
+
  	public function media($id){
  		return $this->request('media/' . $media_id);
  	}
