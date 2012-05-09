@@ -6,7 +6,6 @@
   * Simple curl wrapper for interacting with the instagram API to refresh my PHP knowledge.
   *
   */
-
  class Instagram {
 
  	private $client_id;
@@ -14,8 +13,13 @@
  	private $endpoint = 'https://api.instagram.com/v1/';
 
  	public function __construct($cfg){
- 		$this->client_id = $cfg['client_id'];
- 		$this->access_token = $cfg['access_token'];
+ 		if( array_key_exists('client_id', $cfg) ){
+ 			$this->client_id = $cfg['client_id'];
+ 		}
+ 		
+ 		if( array_key_exists('access_token', $cfg) ){
+ 			$this->access_token = $cfg['access_token'];
+ 		}
  	}
 
  	private function request($endpoint, $params = array()){
@@ -23,11 +27,39 @@
  		return $this->sendRequest($request);
  	}
 
+ 	public function buildRequest($endpoint = '', $params = ''){
+ 		$endpoint = $this->endpoint . $endpoint . '?';
+
+ 		if($this->client_id) {
+ 			$endpoint = $endpoint . 'client_id=' . $this->client_id . '&';
+ 		}
+
+ 		if($this->access_token) {
+ 			$endpoint = $endpoint . 'access_token=' . $this->access_token . '&';
+ 		}
+
+ 		if($params) {
+ 			$endpoint = $endpoint . http_build_query($params);
+ 		}
+
+ 		return $endpoint;
+ 	}
+
+ 	private function sendRequest($uri){
+ 		$curl = curl_init($uri);
+ 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+ 		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
+ 		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
+ 		$response = curl_exec($curl);
+ 		curl_close($curl);
+ 		return $response;
+ 	}
+
  	public function users($user_id){
  		return $this->request('users/' . $user_id);
  	}
 
- 	public function users_self_feed($params){
+ 	public function users_self_feed($params = array()){
  		return $this->request('users/self/feed', $params = array());
  	}
 
@@ -59,7 +91,7 @@
  		return $this->request('users/' . $user_id . '/relationship');
  	}
 
- 	public function media($id){
+ 	public function media($media_id){
  		return $this->request('media/' . $media_id);
  	}
 
@@ -97,20 +129,6 @@
 
  	public function locations_search($params = array()){
  		return $this->request('locations/search', $params);
- 	}
-
- 	private function buildRequest($endpoint, $params){
- 		return $this->endpoint . $endpoint . '?client_id=' . $this->client_id . '&access_token=' . $this->access_token . '&' . http_build_query($params);
- 	}
-
- 	private function sendRequest($uri){
- 		$curl = curl_init($uri);
- 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
- 		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
- 		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
- 		$response = curl_exec($curl);
- 		curl_close($curl);
- 		return json_decode($response);
  	}
 
  }
